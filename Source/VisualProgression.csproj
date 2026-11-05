@@ -11,7 +11,7 @@
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <GenerateDependencyFile>false</GenerateDependencyFile>
     <DebugType>none</DebugType>
-    <GameDir Condition="'$(GameDir)' == ''">F:\SteamLibrary\steamapps\common\RimWorld</GameDir>
+    <GameDir Condition="'$(GameDir)' == ''">$(MSBuildProjectDirectory)\..\..\..</GameDir>
   </PropertyGroup>
 
   <ItemGroup>

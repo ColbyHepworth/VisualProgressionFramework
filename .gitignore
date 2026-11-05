@@ -1,3 +1,11 @@
 bin/
 obj/
-1.7/Assemblies/
+
+# Editor and OS files
+.idea/
+.vs/
+.vscode/
+*.user
+*.DotSettings.user
+Thumbs.db
+.DS_Store
