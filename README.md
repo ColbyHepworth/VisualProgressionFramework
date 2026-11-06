@@ -64,8 +64,9 @@ The two branches are there because many items get their `comps` from a parent de
 
 An item uses the row with the lowest `upToAge` that covers your colony's age. Past the last row it keeps its normal art.
 
-Only items made by bills get a look. Items from traders and loot keep their normal art. If an ideology gives the item
-a style, that style wins.
+Items made by bills get the look of your colony's age. Items a new game starts with, from the scenario and your
+colonists' starting possessions, get the look of the age your colony starts in. Items from traders and loot keep
+their normal art. If an ideology gives the item a style, that style wins.
 
 Items that already have a styleable comp, like most weapons and some apparel, aren't supported yet. The game logs a
 config error if you add looks to one.

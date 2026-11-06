@@ -9,8 +9,10 @@ namespace VisualProgression
         public VisualProgressionMod(ModContentPack content) : base(content)
         {
             var harmony = new Harmony("groovy.visualprogression.framework");
-            // The crafting hook goes first and alone, so a failed hook on another mod can't stop it.
+            // The game's own hooks go first, each alone, so a failed hook can't stop the others.
             harmony.CreateClassProcessor(typeof(CraftedItemLookHook)).Patch();
+            harmony.CreateClassProcessor(typeof(StartingItemsLookHook.WhileMapIsMade)).Patch();
+            harmony.CreateClassProcessor(typeof(StartingItemsLookHook.AfterMapIsMade)).Patch();
             AgeChangeHooks.Apply(harmony);
         }
     }
