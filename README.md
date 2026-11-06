@@ -75,6 +75,10 @@ style wins.
 The look is held in the item's style slot, the same one ideology styles use, so an item can have one or the other.
 Most weapons and some apparel already have that slot. A listed item without one gets it.
 
+For apparel, also give the look's `ThingStyleDef` a `wornGraphicPath`, and pawns wear the look too. Like the item's own
+worn art, it needs one texture per body type (`_Male`, `_Female`, `_Thin`, `_Fat`, `_Hulk`), except headgear, eyewear
+and packs. Without it, the item has the look on the ground and the normal art when worn.
+
 Icons in lists, like the gear tab and trade rows, show a styled item's full stack image at any stack size. Items on the
 map show the right image for their stack.
 
