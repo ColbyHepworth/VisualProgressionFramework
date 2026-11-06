@@ -39,6 +39,9 @@ namespace VisualProgression
             }
         }
 
+        /// <summary>Whether the item's style is one of its own age looks, not an ideology's.</summary>
+        public bool HasAgeLook => parent.StyleDef != null && Props.looks != null && Props.looks.Any(row => row.style == parent.StyleDef);
+
         /// <summary>
         /// Trader goods get the selling faction's age. The item's style slot gives the faction's ideology style, which wins
         /// whichever runs first.

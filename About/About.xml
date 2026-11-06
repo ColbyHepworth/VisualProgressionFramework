@@ -6,9 +6,14 @@
   <supportedVersions>
     <li>1.7</li>
   </supportedVersions>
-  <description>Lets items keep the look of the tech age they were crafted in. Something made in the medieval age still looks medieval later on, and the same item made in the industrial age looks industrial. Old items keep their look until they're used up.
+  <description>
 
-This is a framework. It changes nothing by itself and needs other mods to list items and their art. Something also has to raise your colony's tech level, such as Vanilla Factions Expanded - Tribals.</description>
+    Lets items and buildings keep the look of the tech age they were made in.
+    Something made in the medieval age still looks medieval later on, and the same item made in the industrial age looks industrial.
+    Old items keep their look until they're used up.
+    This is a framework. It changes nothing by itself and needs other mods to list items and buildings and their art.
+    Something also has to raise your colony's tech level, such as Vanilla Factions Expanded - Tribals
+    .</description>
   <modDependencies>
     <li>
       <packageId>brrainz.harmony</packageId>

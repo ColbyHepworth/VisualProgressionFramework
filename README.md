@@ -1,14 +1,15 @@
 # Visual Progression Framework
 
-A RimWorld 1.7 framework that lets items keep the look of the tech age they were crafted in. Something
+A RimWorld 1.7 framework that lets items and buildings keep the look of the tech age they were made in. Something
 made in the medieval age still looks medieval later on, and the same item made in the industrial age
 looks industrial. Old items keep their look until they're used up.
 
 
 ## How it works
 
-Other mods list items and the art each one uses up to a given age. When a bench finishes a listed item,
-the framework reads your colony's tech level and gives the item that age's look. The item saves it and keeps it.
+Other mods list items and buildings and the art each one uses up to a given age. When a bench finishes a listed item,
+or a listed building is built, the framework reads your colony's tech level and gives it that age's look. It saves the
+look and keeps it.
 
 The framework changes nothing by itself. Something also has to raise your colony's tech level, such as
 Vanilla Factions Expanded - Tribals.
@@ -72,8 +73,16 @@ weapons and inventory of pawns from other factions, get the look of that faction
 faction, raid loot, quest rewards and items found on the map keep their normal art. If an ideology gives the item a style, that
 style wins.
 
+Buildings get the look of their builder's age when construction finishes: your colony's, or for a building another
+faction puts up, that faction's. A rebuilt or copied building takes the current age too. Buildings a new game starts
+with get the age your colony starts in, or their own faction's, and furniture made at a bench gets your colony's age
+like any item. Furniture bought from traders, buildings placed in god mode, and buildings on faction bases, ruins and
+quest sites keep their normal art. A blueprint or frame doesn't show the new look while the building goes up. A
+building's look needs the same graphic class as its own art, such as `Graphic_Multi` for furniture that rotates.
+
 The look is held in the item's style slot, the same one ideology styles use, so an item can have one or the other.
-Most weapons and some apparel already have that slot. A listed item without one gets it.
+Most weapons and some apparel already have that slot. A listed item without one gets it. When Ideology weighs a
+room's styles, a thing with a look counts as having no style, so it doesn't upset colonists who care about style.
 
 For apparel, also give the look's `ThingStyleDef` a `wornGraphicPath`, and pawns wear the look too. Like the item's own
 worn art, it needs one texture per body type (`_Male`, `_Female`, `_Thin`, `_Fat`, `_Hulk`), except headgear, eyewear
