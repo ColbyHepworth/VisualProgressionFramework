@@ -6,8 +6,11 @@ using Verse;
 
 namespace VisualProgression
 {
-    /// <summary>Gives an item the look of the age it was made in and keeps that look through stacking and splitting.</summary>
-    public class CompAgeLook : CompStyleable
+    /// <summary>
+    /// Gives an item the look of the age it was made in, held in the item's style slot, and keeps that look through
+    /// stacking and splitting.
+    /// </summary>
+    public class CompAgeLook : ThingComp
     {
         private CompProperties_AgeLook Props => (CompProperties_AgeLook)props;
 
@@ -36,10 +39,12 @@ namespace VisualProgression
             }
         }
 
-        /// <summary>Trader goods get the selling faction's age, after its ideology style.</summary>
+        /// <summary>
+        /// Trader goods get the selling faction's age. The item's style slot gives the faction's ideology style, which wins
+        /// whichever runs first.
+        /// </summary>
         public override void PostPostGeneratedForTrader(TraderKindDef trader, PlanetTile forTile, Faction forFaction)
         {
-            base.PostPostGeneratedForTrader(trader, forTile, forFaction);
             ApplyLookForFactionAge(forFaction);
         }
 

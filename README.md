@@ -63,7 +63,8 @@ The two branches are there because many items get their `comps` from a parent de
 `comps` node yet.
 
 An item uses the row with the lowest `upToAge` that covers its age: your colony's, or for trader goods and pawns' gear,
-their faction's. Past the last row it keeps its normal art.
+their faction's. Past the last row it keeps its normal art. An item takes one list of looks. If a second mod adds
+another, the game logs a config error and the second list is ignored.
 
 Items made by bills get the look of your colony's age. Items a new game starts with, from the scenario and your
 colonists' starting possessions, get the look of the age your colony starts in. Items traders sell, and the clothes,
@@ -71,8 +72,8 @@ weapons and inventory of pawns from other factions, get the look of that faction
 faction, raid loot, quest rewards and items found on the map keep their normal art. If an ideology gives the item a style, that
 style wins.
 
-Items that already have a styleable comp, like most weapons and some apparel, aren't supported yet. The game logs a
-config error if you add looks to one.
+The look is held in the item's style slot, the same one ideology styles use, so an item can have one or the other.
+Most weapons and some apparel already have that slot. A listed item without one gets it.
 
 Icons in lists, like the gear tab and trade rows, show a styled item's full stack image at any stack size. Items on the
 map show the right image for their stack.

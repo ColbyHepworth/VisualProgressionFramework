@@ -15,18 +15,25 @@ namespace VisualProgression
             compClass = typeof(CompAgeLook);
         }
 
+        /// <summary>Adds the game's style slot to the item when it has none, so every listed item has exactly one.</summary>
+        public override void ResolveReferences(ThingDef parentDef)
+        {
+            base.ResolveReferences(parentDef);
+            if (!parentDef.comps.Any(comp => typeof(CompStyleable).IsAssignableFrom(comp.compClass)))
+            {
+                parentDef.comps.Add(new CompProperties_Styleable());
+            }
+        }
+
         public override IEnumerable<string> ConfigErrors(ThingDef parentDef)
         {
             foreach (string error in base.ConfigErrors(parentDef))
             {
                 yield return error;
             }
-            foreach (CompProperties comp in parentDef.comps)
+            if (parentDef.comps.First(comp => comp is CompProperties_AgeLook) != this)
             {
-                if (comp != this && typeof(CompStyleable).IsAssignableFrom(comp.compClass))
-                {
-                    yield return "This item already has a styleable comp, and looks by age don't support that yet.";
-                }
+                yield return "This item already has looks from another list, so these are ignored. Put all its looks in one list.";
             }
             if (looks.NullOrEmpty())
             {
