@@ -70,17 +70,18 @@ a style, that style wins.
 Items that already have a styleable comp, like most weapons and some apparel, aren't supported yet. The game logs a
 config error if you add looks to one.
 
-Icons in lists, like the gear tab and trade rows, show a styled item's full-stack image at any stack size. Items on the
+Icons in lists, like the gear tab and trade rows, show a styled item's full stack image at any stack size. Items on the
 map show the right image for their stack.
 
+The item's icon in bills, the research tab and info cards follows your colony's age, so it shows what the item would
+look like if made now. It updates when a game starts or loads, and the moment Vanilla Factions Expanded - Tribals or
+Node Research changes your colony's age. Without either of them, it checks about once an in game hour. Items with
+their own icon file (`uiIconPath` or `uiIconPathsStuff`) keep their normal icon there, because copies without a look
+would show the swapped icon too.
+
 To test your rows, turn on dev mode and use "Set colony tech level..." under Visual Progression in the debug actions
-menu. Raise it one age at a time, because Vanilla Factions Expanded - Tribals overshoots on bigger jumps. The level
-isn't saved unless a mod like that saves it.
-
-## Building
-
-Clone this repo into your RimWorld `Mods` folder and run `dotnet build Source`. The project finds the game's DLLs
-three folders up. If your copy lives somewhere else, add `-p:GameDir="<your RimWorld folder>"`.
+menu. Icons switch to the new age at once. Raise it one age at a time, because Vanilla Factions Expanded - Tribals
+overshoots on bigger jumps. The level isn't saved unless a mod like that saves it.
 
 ## License
 

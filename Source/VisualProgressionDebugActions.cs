@@ -18,7 +18,11 @@ namespace VisualProgression
                 if (level != TechLevel.Undefined)
                 {
                     levels.Add(new DebugMenuOption(level.ToString(), DebugMenuOptionMode.Action,
-                        () => Faction.OfPlayer.def.techLevel = level));
+                        () =>
+                        {
+                            Faction.OfPlayer.def.techLevel = level;
+                            AgeIcons.ApplyFor(level);
+                        }));
                 }
             }
             Find.WindowStack.Add(new Dialog_DebugOptionListLister(levels));
