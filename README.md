@@ -4,6 +4,8 @@ A RimWorld 1.7 framework that lets items and buildings keep the look of the tech
 made in the medieval age still looks medieval later on, and the same item made in the industrial age
 looks industrial. Old items keep their look until they're used up.
 
+[Steam Workshop page](https://steamcommunity.com/sharedfiles/filedetails/?id=3834891951)
+
 
 ## How it works
 
