@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using HarmonyLib;
 using RimWorld;
 using UnityEngine;
 using Verse;
@@ -12,6 +14,9 @@ namespace VisualProgression
     /// </summary>
     public static class AgeIcons
     {
+        private const int WarningKey = 0x56504733;
+
+        private static AccessTools.FieldRef<CompProperties_Refuelable, Texture2D> cachedFuelIcon;
         private static List<TypeIcon> types;
         private static TechLevel appliedAge = TechLevel.Undefined;
 
@@ -28,6 +33,35 @@ namespace VisualProgression
                 type.ShowFor(age);
             }
             appliedAge = age;
+            RefreshCachedIcons();
+        }
+
+        // These read a type's icon once and keep it, so they're read again after each swap.
+        private static void RefreshCachedIcons()
+        {
+            try
+            {
+                cachedFuelIcon ??= AccessTools.FieldRefAccess<CompProperties_Refuelable, Texture2D>("fuelIcon");
+                HashSet<ThingDef> listed = types.Select(type => type.Def).ToHashSet();
+                foreach (ThingDef def in DefDatabase<ThingDef>.AllDefsListForReading)
+                {
+                    CompProperties_Refuelable refuelable = def.GetCompProperties<CompProperties_Refuelable>();
+                    // The game's own fallback when the filter allows nothing.
+                    ThingDef fuel = refuelable?.fuelFilter?.AnyAllowedDef ?? ThingDefOf.Chemfuel;
+                    if (refuelable != null && refuelable.fuelIconPath.NullOrEmpty() && listed.Contains(fuel))
+                    {
+                        cachedFuelIcon(refuelable) = null;
+                    }
+                }
+                if (types.Any(type => type.IsMedicine))
+                {
+                    MedicalCareUtility.Reset();
+                }
+            }
+            catch (Exception e)
+            {
+                Log.WarningOnce("[Visual Progression] Couldn't refresh the fuel and medical care icons, so they may show an older age: " + e, WarningKey);
+            }
         }
 
         // Items with their own icon file are left out: their unstyled copies draw the type's icon too.
@@ -58,6 +92,10 @@ namespace VisualProgression
                 normalIcon = def.uiIcon;
                 normalMaterial = def.uiIconMaterial;
             }
+
+            public ThingDef Def => def;
+
+            public bool IsMedicine => def.IsMedicine;
 
             public void ShowFor(TechLevel age)
             {

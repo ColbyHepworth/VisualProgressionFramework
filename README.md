@@ -95,7 +95,9 @@ The item's icon in bills, the research tab and info cards follows your colony's 
 look like if made now. It updates when a game starts or loads, and the moment Vanilla Factions Expanded - Tribals or
 Node Research changes your colony's age. Without either of them, it checks about once an in game hour. Items with
 their own icon file (`uiIconPath` or `uiIconPathsStuff`) keep their normal icon there, because copies without a look
-would show the swapped icon too.
+would show the swapped icon too. The fuel icon on refuelable buildings and the medical care icons follow your colony's
+age the same way. Buttons for a real item, like taking a drug, using an item or an apparel ability, show that item's
+own look.
 
 To test your rows, turn on dev mode and use "Set colony tech level..." under Visual Progression in the debug actions
 menu. Icons switch to the new age at once. Raise it one age at a time, because Vanilla Factions Expanded - Tribals

@@ -17,6 +17,9 @@ namespace VisualProgression
             TryPatch(harmony, typeof(PawnGearLookHook), "pawns' gear keeps its normal art");
             TryPatch(harmony, typeof(FinishedBuildingLookHook), "finished buildings keep their normal art");
             TryPatch(harmony, typeof(StyleDominanceHook), "Ideology counts things with a look as another ideology's style");
+            TryPatch(harmony, typeof(ItemButtonIconHooks.DrugButton), "the take-drug button shows the type's icon");
+            TryPatch(harmony, typeof(ItemButtonIconHooks.UseButton), "items' use buttons show the type's icon");
+            TryPatch(harmony, typeof(ItemButtonIconHooks.ApparelAbilityButton), "apparel ability buttons show the type's icon");
             AgeChangeHooks.Apply(harmony);
         }
 
