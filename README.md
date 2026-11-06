@@ -62,11 +62,14 @@ Write one `ThingStyleDef` for each look, then add the comp to the item:
 The two branches are there because many items get their `comps` from a parent def, so the item may not have its own
 `comps` node yet.
 
-An item uses the row with the lowest `upToAge` that covers your colony's age. Past the last row it keeps its normal art.
+An item uses the row with the lowest `upToAge` that covers its age: your colony's, or for trader goods and pawns' gear,
+their faction's. Past the last row it keeps its normal art.
 
 Items made by bills get the look of your colony's age. Items a new game starts with, from the scenario and your
-colonists' starting possessions, get the look of the age your colony starts in. Items from traders and loot keep
-their normal art. If an ideology gives the item a style, that style wins.
+colonists' starting possessions, get the look of the age your colony starts in. Items traders sell, and the clothes,
+weapons and inventory of pawns from other factions, get the look of that faction's age. Orbital traders, pawns with no
+faction, raid loot, quest rewards and items found on the map keep their normal art. If an ideology gives the item a style, that
+style wins.
 
 Items that already have a styleable comp, like most weapons and some apparel, aren't supported yet. The game logs a
 config error if you add looks to one.
