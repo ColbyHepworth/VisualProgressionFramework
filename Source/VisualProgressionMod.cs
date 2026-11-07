@@ -16,7 +16,8 @@ namespace VisualProgression
             TryPatch(harmony, typeof(StartingItemsLookHook.AfterMapIsMade), "starting items added after the map keep their normal art");
             TryPatch(harmony, typeof(PawnGearLookHook), "pawns' gear keeps its normal art");
             TryPatch(harmony, typeof(FinishedBuildingLookHook), "finished buildings keep their normal art");
-            TryPatch(harmony, typeof(StyleDominanceHook), "Ideology counts things with a look as another ideology's style");
+            TryPatch(harmony, typeof(SurgeryProductLookHook.MadeItem), "new items never get a look as they're made, so surgery products keep their normal art");
+            TryPatch(harmony, typeof(SurgeryProductLookHook.DuringSurgery), "surgeries aren't watched, so their products keep their normal art");            TryPatch(harmony, typeof(StyleDominanceHook), "Ideology counts things with a look as another ideology's style");
             TryPatch(harmony, typeof(ArtFromModHook), "looks that name a mod's art show the normal art");
             TryPatch(harmony, typeof(ItemButtonIconHooks.DrugButton), "the take-drug button shows the type's icon");
             TryPatch(harmony, typeof(ItemButtonIconHooks.UseButton), "items' use buttons show the type's icon");

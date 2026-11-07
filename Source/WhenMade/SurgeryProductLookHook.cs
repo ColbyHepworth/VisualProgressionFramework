@@ -1,0 +1,85 @@
+using System;
+using System.Collections.Generic;
+using HarmonyLib;
+using RimWorld;
+using Verse;
+
+namespace VisualProgression
+{
+    /// <summary>
+    /// Gives items a surgery produces, like hemogen packs and ova, the look of the colony's age. Surgeries make and place
+    /// their items themselves instead of going through a bill's crafting step, so an item gets its look as it's made,
+    /// before it can join a stack on the ground. Body parts and implants a surgery removes weren't made then, so they keep
+    /// their normal art.
+    /// </summary>
+    public static class SurgeryProductLookHook
+    {
+        private const int WarningKey = 0x56504735;
+        private static bool makingSurgeryProducts;
+        private static HashSet<ThingDef> removableParts;
+
+        [HarmonyPatch(typeof(Bill_Medical), nameof(Bill_Medical.Notify_IterationCompleted))]
+        public static class DuringSurgery
+        {
+            private static void Prefix(out bool __state)
+            {
+                __state = makingSurgeryProducts;
+                makingSurgeryProducts = true;
+            }
+
+            private static void Finalizer(bool __state)
+            {
+                makingSurgeryProducts = __state;
+            }
+        }
+
+        [HarmonyPatch(typeof(ThingMaker), nameof(ThingMaker.MakeThing))]
+        public static class MadeItem
+        {
+            private static void Postfix(Thing __result)
+            {
+                if (!makingSurgeryProducts || __result == null)
+                {
+                    return;
+                }
+                // An error here would stop the surgery partway, after its effects on the patient.
+                try
+                {
+                    if (!RemovableParts().Contains(__result.def))
+                    {
+                        __result.TryGetComp<CompAgeLook>()?.ApplyLookForColonyAge();
+                    }
+                }
+                catch (Exception e)
+                {
+                    Log.WarningOnce("[Visual Progression] Couldn't give a surgery's product its look: " + e, WarningKey);
+                }
+            }
+        }
+
+        // Items that come out of a body when a part or implant is removed. Several game and mod surgeries spawn them, each
+        // its own way, so they're recognized by what they are rather than by which surgery made them.
+        private static HashSet<ThingDef> RemovableParts()
+        {
+            if (removableParts == null)
+            {
+                removableParts = new HashSet<ThingDef>();
+                foreach (HediffDef hediff in DefDatabase<HediffDef>.AllDefsListForReading)
+                {
+                    if (hediff.spawnThingOnRemoved != null)
+                    {
+                        removableParts.Add(hediff.spawnThingOnRemoved);
+                    }
+                }
+                foreach (BodyPartDef part in DefDatabase<BodyPartDef>.AllDefsListForReading)
+                {
+                    if (part.spawnThingOnRemoved != null)
+                    {
+                        removableParts.Add(part.spawnThingOnRemoved);
+                    }
+                }
+            }
+            return removableParts;
+        }
+    }
+}

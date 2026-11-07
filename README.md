@@ -69,11 +69,12 @@ An item uses the row with the lowest `upToAge` that covers its age: your colony'
 their faction's. Past the last row it keeps its normal art. An item takes one list of looks. If a second mod adds
 another, the game logs a config error and the second list is ignored.
 
-Items made by bills get the look of your colony's age. Items a new game starts with, from the scenario and your
-colonists' starting possessions, get the look of the age your colony starts in. Items traders sell, and the clothes,
-weapons and inventory of pawns from other factions, get the look of that faction's age. Orbital traders, pawns with no
-faction, raid loot, quest rewards and items found on the map keep their normal art. If an ideology gives the item a style, that
-style wins.
+Items made by bills get the look of your colony's age, and so do items a surgery produces, like hemogen packs.
+Body parts and implants a surgery removes keep their normal art. Items a new game starts with, from the scenario and
+your colonists starting possessions, get the look of the age your colony starts in. Items traders sell, and the
+clothes, weapons and inventory of pawns from other factions, get the look of that faction's age. Orbital traders, pawns
+with no faction, raid loot, quest rewards and items found on the map keep their normal art. If an ideology gives the
+item a style, that style wins.
 
 Buildings get the look of their builder's age when construction finishes: your colony's, or for a building another
 faction puts up, that faction's. A rebuilt or copied building takes the current age too. Buildings a new game starts
