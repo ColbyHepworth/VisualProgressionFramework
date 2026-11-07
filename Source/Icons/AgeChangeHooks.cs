@@ -54,7 +54,7 @@ namespace VisualProgression
 
         private static void ApplyColonyAge()
         {
-            AgeIcons.ApplyFor(Faction.OfPlayer.def.techLevel);
+            AgeTypeLooks.ApplyFor(Faction.OfPlayer.def.techLevel);
         }
     }
 }

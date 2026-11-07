@@ -16,25 +16,25 @@ namespace VisualProgression
 
         public override void FinalizeInit()
         {
-            AgeIcons.ApplyFor(Faction.OfPlayer.def.techLevel);
+            AgeTypeLooks.ApplyFor(Faction.OfPlayer.def.techLevel);
         }
 
         // Again after the game finishes starting or loading: mods like Node Research set the age after FinalizeInit.
         public override void StartedNewGame()
         {
-            AgeIcons.ApplyFor(Faction.OfPlayer.def.techLevel);
+            AgeTypeLooks.ApplyFor(Faction.OfPlayer.def.techLevel);
         }
 
         public override void LoadedGame()
         {
-            AgeIcons.ApplyFor(Faction.OfPlayer.def.techLevel);
+            AgeTypeLooks.ApplyFor(Faction.OfPlayer.def.techLevel);
         }
 
         public override void GameComponentTick()
         {
             if (!AgeChangeHooks.AnyHooked && Find.TickManager.TicksGame % GenDate.TicksPerHour == 0)
             {
-                AgeIcons.ApplyFor(Faction.OfPlayer.def.techLevel);
+                AgeTypeLooks.ApplyFor(Faction.OfPlayer.def.techLevel);
             }
         }
     }

@@ -21,7 +21,7 @@ namespace VisualProgression
                         () =>
                         {
                             Faction.OfPlayer.def.techLevel = level;
-                            AgeIcons.ApplyFor(level);
+                            AgeTypeLooks.ApplyFor(level);
                         }));
                 }
             }
