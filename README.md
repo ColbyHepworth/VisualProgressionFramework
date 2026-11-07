@@ -90,6 +90,31 @@ For apparel, also give the look's `ThingStyleDef` a `wornGraphicPath`, and pawns
 worn art, it needs one texture per body type (`_Male`, `_Female`, `_Thin`, `_Fat`, `_Hulk`), except headgear, eyewear
 and packs. Without it, the item has the look on the ground and the normal art when worn.
 
+To rename an item for an age, give the look's `ThingStyleDef` an `overrideLabel`. The item shows that name wherever it
+appears on its own: on the map, when inspected, in stacks and in inventories. Lists of item types, like storage
+filters and bills, keep the item's normal name. The name replaces the whole label, so an item made from a material
+loses that part, such as "wooden".
+
+A retexture mod that puts its art at the game's own path hides the original, whatever the load order. To use the art
+from one mod's files instead, make the look's graphic data a `VisualProgression.GraphicData_FromMod` and name the mod:
+
+```xml
+<ThingStyleDef>
+  <defName>MyMod_HemogenPack_Plain</defName>
+  <overrideLabel>hemogen pack</overrideLabel>
+  <graphicData Class="VisualProgression.GraphicData_FromMod">
+    <fromMod>Ludeon.RimWorld.Biotech</fromMod>
+    <texPath>Things/Item/Resource/HemogenPack</texPath>
+    <graphicClass>Graphic_StackCount</graphicClass>
+  </graphicData>
+</ThingStyleDef>
+```
+
+`fromMod` takes a packageId: `Ludeon.RimWorld` for the base game, `Ludeon.RimWorld.Biotech` and the like for a DLC, or
+any mod's. It works with `Graphic_Single`, `Graphic_StackCount` and `Graphic_Random`, for the look's own graphic only:
+a `wornGraphicPath` or `uiIconPath` still shows whichever mod's art wins. When that mod isn't active or has no texture
+at the path, the look shows the normal art and the game logs a warning.
+
 Icons in lists, like the gear tab and trade rows, show a styled item's full stack image at any stack size. Items on the
 map show the right image for their stack.
 
