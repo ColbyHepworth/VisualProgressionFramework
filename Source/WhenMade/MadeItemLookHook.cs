@@ -7,12 +7,12 @@ using Verse;
 namespace VisualProgression
 {
     /// <summary>
-    /// Gives items a surgery produces, like hemogen packs and ova, the look of the colony's age. Surgeries make and place
-    /// their items themselves instead of going through a bill's crafting step, so an item gets its look as it's made,
-    /// before it can join a stack on the ground. Body parts and implants a surgery removes weren't made then, so they keep
-    /// their normal art.
+    /// Gives items a surgery produces, like hemogen packs and ova, and items a colonist's job makes by name (found by
+    /// <see cref="JobProductLookHook"/>) the look of the colony's age. Both make and place their items themselves instead
+    /// of going through a bill's crafting step, so an item gets its look as it's made, before it can join a stack on the
+    /// ground. Body parts and implants removed from a body weren't made then, so they keep their normal art.
     /// </summary>
-    public static class SurgeryProductLookHook
+    public static class MadeItemLookHook
     {
         private const int WarningKey = 0x56504735;
         private static bool makingSurgeryProducts;
@@ -38,11 +38,11 @@ namespace VisualProgression
         {
             private static void Postfix(Thing __result)
             {
-                if (!makingSurgeryProducts || __result == null)
+                if (__result == null || (!makingSurgeryProducts && !JobProductLookHook.IsMaking(__result.def)))
                 {
                     return;
                 }
-                // An error here would stop the surgery partway, after its effects on the patient.
+                // An error here would stop the surgery or job partway, after its other effects.
                 try
                 {
                     if (!RemovableParts().Contains(__result.def))
@@ -52,7 +52,7 @@ namespace VisualProgression
                 }
                 catch (Exception e)
                 {
-                    Log.WarningOnce("[Visual Progression] Couldn't give a surgery's product its look: " + e, WarningKey);
+                    Log.WarningOnce("[Visual Progression] Couldn't give a made item its look: " + e, WarningKey);
                 }
             }
         }

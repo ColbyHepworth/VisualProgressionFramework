@@ -70,7 +70,11 @@ their faction's. Past the last row it keeps its normal art. An item takes one li
 another, the game logs a config error and the second list is ignored.
 
 Items made by bills get the look of your colony's age, and so do items a surgery produces, like hemogen packs.
-Body parts and implants a surgery removes keep their normal art. Items a new game starts with, from the scenario and
+Body parts and implants a surgery removes keep their normal art. Items a job makes also get your colony's age when the
+job's code names the item, like the hemogen packs Vanilla Races Expanded - Sanguophage's extraction jobs make. The
+framework finds those jobs when the game starts, so a mod needs nothing extra for it. The age is your colony's even
+when another faction's pawn does the job. A job that takes the item from its settings instead, and things buildings
+produce on their own, like beer from a fermenting barrel, keep their normal art. Items a new game starts with, from the scenario and
 your colonists starting possessions, get the look of the age your colony starts in. Items traders sell, and the
 clothes, weapons and inventory of pawns from other factions, get the look of that faction's age. Orbital traders, pawns
 with no faction, raid loot, quest rewards and items found on the map keep their normal art. If an ideology gives the
