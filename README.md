@@ -40,6 +40,12 @@ Write one `ThingStyleDef` for each look, then list the item's looks in an `ItemL
 </Defs>
 ```
 
+A look that leaves out its `graphicClass` takes its item's, such as `Graphic_StackCount` for medicine or `Graphic_Multi`
+for furniture that rotates, so its art must be laid out the way that class expects. Meals use `Graphic_MealVariants`,
+which wants a set of images for mixed, meat and vegetarian meals, so a meal look with plain stack images gives
+`Graphic_StackCount` itself, as above. A look shared by items with different graphic classes needs its own
+`graphicClass` too.
+
 For an item from another mod, give the `ItemLooksDef` `MayRequire="<that mod's packageId>"`, so it's skipped when that
 mod isn't active. Lists added as a `VisualProgression.CompProperties_AgeLook` in the item's `comps`, the way packs for
 the first version did, still work.
@@ -64,8 +70,7 @@ Buildings get the look of their builder's age when construction finishes: your c
 faction puts up, that faction's. A rebuilt or copied building takes the current age too. Buildings a new game starts
 with get the age your colony starts in, or their own faction's, and furniture made at a bench gets your colony's age
 like any item. Furniture bought from traders, buildings placed in god mode, and buildings on faction bases, ruins and
-quest sites keep their normal art. A blueprint or frame doesn't show the new look while the building goes up. A
-building's look needs the same graphic class as its own art, such as `Graphic_Multi` for furniture that rotates.
+quest sites keep their normal art. A blueprint or frame doesn't show the new look while the building goes up.
 
 The look is held in the item's style slot, the same one ideology styles use, so an item can have one or the other.
 Most weapons and some apparel already have that slot. A listed item without one gets it. When Ideology weighs a

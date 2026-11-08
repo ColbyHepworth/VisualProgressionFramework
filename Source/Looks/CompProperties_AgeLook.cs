@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using RimWorld;
@@ -15,13 +16,30 @@ namespace VisualProgression
             compClass = typeof(CompAgeLook);
         }
 
-        /// <summary>Adds the game's style slot to the item when it has none, so every listed item has exactly one.</summary>
+        /// <summary>
+        /// Adds the game's style slot to the item when it has none, so every listed item has exactly one, and gives a look
+        /// that leaves out its graphic class the item's.
+        /// </summary>
         public override void ResolveReferences(ThingDef parentDef)
         {
             base.ResolveReferences(parentDef);
             if (!parentDef.comps.Any(comp => typeof(CompStyleable).IsAssignableFrom(comp.compClass)))
             {
                 parentDef.comps.Add(new CompProperties_Styleable());
+            }
+            Type itemGraphicClass = parentDef.graphicData?.graphicClass;
+            if (itemGraphicClass == null || looks == null)
+            {
+                return;
+            }
+            // The game builds a look's graphic after loading finishes, so the class is in place by then.
+            foreach (AgeLookRow row in looks)
+            {
+                GraphicData lookGraphic = row.style?.graphicData;
+                if (lookGraphic != null && lookGraphic.graphicClass == null)
+                {
+                    lookGraphic.graphicClass = itemGraphicClass;
+                }
             }
         }
 
