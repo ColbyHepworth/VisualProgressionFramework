@@ -11,6 +11,7 @@ namespace VisualProgression
         {
             var harmony = new Harmony("groovy.visualprogression.framework");
             // The game's own hooks go first, each alone, so a failed hook can't stop the others.
+            TryPatch(harmony, typeof(LookListsHook), "look lists from ItemLooksDef aren't attached, so those items keep their normal art");
             TryPatch(harmony, typeof(CraftedItemLookHook), "crafted items keep their normal art");
             TryPatch(harmony, typeof(StartingItemsLookHook.WhileMapIsMade), "starting items keep their normal art");
             TryPatch(harmony, typeof(StartingItemsLookHook.AfterMapIsMade), "starting items added after the map keep their normal art");

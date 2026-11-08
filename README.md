@@ -18,7 +18,7 @@ Vanilla Factions Expanded - Tribals.
 
 ## Adding your items
 
-Write one `ThingStyleDef` for each look, then add the comp to the item:
+Write one `ThingStyleDef` for each look, then list the item's looks in an `ItemLooksDef`:
 
 ```xml
 <Defs>
@@ -29,45 +29,25 @@ Write one `ThingStyleDef` for each look, then add the comp to the item:
       <graphicClass>Graphic_StackCount</graphicClass>
     </graphicData>
   </ThingStyleDef>
+
+  <VisualProgression.ItemLooksDef>
+    <defName>MyMod_MealSimple</defName>
+    <item>MealSimple</item>
+    <looks>
+      <li><upToAge>Medieval</upToAge><style>MyMod_MealSimple_Medieval</style></li>
+    </looks>
+  </VisualProgression.ItemLooksDef>
 </Defs>
 ```
 
-```xml
-<Patch>
-  <Operation Class="PatchOperationConditional">
-    <xpath>Defs/ThingDef[defName="MealSimple"]/comps</xpath>
-    <match Class="PatchOperationAdd">
-      <xpath>Defs/ThingDef[defName="MealSimple"]/comps</xpath>
-      <value>
-        <li Class="VisualProgression.CompProperties_AgeLook">
-          <looks>
-            <li><upToAge>Medieval</upToAge><style>MyMod_MealSimple_Medieval</style></li>
-          </looks>
-        </li>
-      </value>
-    </match>
-    <nomatch Class="PatchOperationAdd">
-      <xpath>Defs/ThingDef[defName="MealSimple"]</xpath>
-      <value>
-        <comps>
-          <li Class="VisualProgression.CompProperties_AgeLook">
-            <looks>
-              <li><upToAge>Medieval</upToAge><style>MyMod_MealSimple_Medieval</style></li>
-            </looks>
-          </li>
-        </comps>
-      </value>
-    </nomatch>
-  </Operation>
-</Patch>
-```
-
-The two branches are there because many items get their `comps` from a parent def, so the item may not have its own
-`comps` node yet.
+For an item from another mod, give the `ItemLooksDef` `MayRequire="<that mod's packageId>"`, so it's skipped when that
+mod isn't active. Lists added as a `VisualProgression.CompProperties_AgeLook` in the item's `comps`, the way packs for
+the first version did, still work.
 
 An item uses the row with the lowest `upToAge` that covers its age: your colony's, or for trader goods and pawns' gear,
-their faction's. Past the last row it keeps its normal art. An item takes one list of looks. If a second mod adds
-another, the game logs a config error and the second list is ignored.
+their faction's. Past the last row it keeps its normal art. When several mods list looks for the same item, their lists
+merge. For the same `upToAge`, a row from an `ItemLooksDef` beats a row patched into `comps`, and among each kind the
+mod loaded last wins. An item the game makes at startup, like meat or corpses, can't take looks.
 
 Items made by bills get the look of your colony's age, and so do items a surgery produces, like hemogen packs.
 Body parts and implants a surgery removes keep their normal art. Items a job makes also get your colony's age when the
