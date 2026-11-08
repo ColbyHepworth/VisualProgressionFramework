@@ -10,6 +10,8 @@ namespace VisualProgression
     {
         public List<AgeLookRow> looks;
 
+        private List<int> upToAges;
+
         public CompProperties_AgeLook()
         {
             compClass = typeof(CompAgeLook);
@@ -38,6 +40,36 @@ namespace VisualProgression
                     LookFromItem.FillIn(row.style, parentDef);
                 }
             }
+        }
+
+        /// <summary>The look for an age, or null past the last row, where the item keeps its normal art.</summary>
+        public ThingStyleDef LookFor(TechLevel age)
+        {
+            if (looks == null)
+            {
+                return null;
+            }
+            // Building previews ask every frame, so the ages are listed once. Lists are final once the game has loaded.
+            upToAges ??= looks.Select(row => (int)row.upToAge).ToList();
+            int rowIndex = AgeLookTable.RowFor(upToAges, (int)age);
+            return rowIndex >= 0 ? looks[rowIndex].style : null;
+        }
+
+        /// <summary>Whether the style is one of the item's age looks, not an ideology's.</summary>
+        public bool IsAgeLook(ThingStyleDef style)
+        {
+            if (style == null || looks == null)
+            {
+                return false;
+            }
+            foreach (AgeLookRow row in looks)
+            {
+                if (row.style == style)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         public override IEnumerable<string> ConfigErrors(ThingDef parentDef)

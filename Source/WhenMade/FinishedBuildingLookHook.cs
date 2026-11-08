@@ -34,7 +34,7 @@ namespace VisualProgression
                     return;
                 }
                 ThingStyleDef styleBefore = building.StyleDef;
-                // A rebuilt or copied building's frame carries the old building's look, so it takes the current age instead.
+                // The frame carries the look from when its blueprint was placed, and the age may have changed since.
                 if (look.HasAgeLook)
                 {
                     building.StyleDef = null;

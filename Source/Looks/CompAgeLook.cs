@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using RimWorld;
 using RimWorld.Planet;
 using Verse;
@@ -26,21 +24,19 @@ namespace VisualProgression
         /// </summary>
         public void ApplyLookForFactionAge(Faction faction)
         {
-            List<AgeLookRow> looks = Props.looks;
-            if (faction == null || faction.def.techLevel == TechLevel.Undefined || parent.StyleDef != null || parent.StyleSourcePrecept != null || looks.NullOrEmpty())
+            if (faction == null || faction.def.techLevel == TechLevel.Undefined || parent.StyleDef != null || parent.StyleSourcePrecept != null)
             {
                 return;
             }
-            List<int> upToAges = looks.Select(row => (int)row.upToAge).ToList();
-            int rowIndex = AgeLookTable.RowFor(upToAges, (int)faction.def.techLevel);
-            if (rowIndex >= 0)
+            ThingStyleDef look = Props.LookFor(faction.def.techLevel);
+            if (look != null)
             {
-                parent.StyleDef = looks[rowIndex].style;
+                parent.StyleDef = look;
             }
         }
 
         /// <summary>Whether the item's style is one of its own age looks, not an ideology's.</summary>
-        public bool HasAgeLook => parent.StyleDef != null && Props.looks != null && Props.looks.Any(row => row.style == parent.StyleDef);
+        public bool HasAgeLook => Props.IsAgeLook(parent.StyleDef);
 
         /// <summary>
         /// Trader goods get the selling faction's age. The item's style slot gives the faction's ideology style, which wins
