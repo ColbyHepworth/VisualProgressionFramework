@@ -18,6 +18,12 @@ namespace VisualProgression
             {
                 return;
             }
+            // The item's own mod is filled in when references are resolved, and some loaders build graphics before that.
+            // The look is built again once it's filled in, and an item without a mod gets its own warning then.
+            if (fromModData.fromMod.NullOrEmpty())
+            {
+                return;
+            }
             ModContentPack mod = RunningMod(fromModData.fromMod);
             if (mod == null)
             {

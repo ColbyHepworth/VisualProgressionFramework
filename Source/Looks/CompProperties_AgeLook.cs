@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using RimWorld;
@@ -17,8 +16,9 @@ namespace VisualProgression
         }
 
         /// <summary>
-        /// Adds the game's style slot to the item when it has none, so every listed item has exactly one, and gives a look
-        /// that leaves out its graphic class the item's.
+        /// Adds the game's style slot to the item when it has none, so every listed item has exactly one. A look that
+        /// leaves out its graphic class gets the item's, and one that wants a mod's art without naming the mod gets the
+        /// item's own mod.
         /// </summary>
         public override void ResolveReferences(ThingDef parentDef)
         {
@@ -27,18 +27,15 @@ namespace VisualProgression
             {
                 parentDef.comps.Add(new CompProperties_Styleable());
             }
-            Type itemGraphicClass = parentDef.graphicData?.graphicClass;
-            if (itemGraphicClass == null || looks == null)
+            if (looks == null)
             {
                 return;
             }
-            // The game builds a look's graphic after loading finishes, so the class is in place by then.
             foreach (AgeLookRow row in looks)
             {
-                GraphicData lookGraphic = row.style?.graphicData;
-                if (lookGraphic != null && lookGraphic.graphicClass == null)
+                if (row.style != null)
                 {
-                    lookGraphic.graphicClass = itemGraphicClass;
+                    LookFromItem.FillIn(row.style, parentDef);
                 }
             }
         }

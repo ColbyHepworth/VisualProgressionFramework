@@ -86,24 +86,25 @@ item made from a material loses that part, such as "wooden". Places that name th
 info cards, follow your colony's age the way the type's icon does (below).
 
 A retexture mod that puts its art at the game's own path hides the original, whatever the load order. To use the art
-from one mod's files instead, make the look's graphic data a `VisualProgression.GraphicData_FromMod` and name the mod:
+from one mod's files instead, make the look's graphic data a `VisualProgression.GraphicData_FromMod`. Without a
+`fromMod`, the art comes from the mod whose Defs files add the item, here Biotech. An item another mod adds through a
+patch has no mod of its own, so its look names the mod:
 
 ```xml
 <ThingStyleDef>
   <defName>MyMod_HemogenPack_Plain</defName>
   <overrideLabel>hemogen pack</overrideLabel>
   <graphicData Class="VisualProgression.GraphicData_FromMod">
-    <fromMod>Ludeon.RimWorld.Biotech</fromMod>
     <texPath>Things/Item/Resource/HemogenPack</texPath>
-    <graphicClass>Graphic_StackCount</graphicClass>
   </graphicData>
 </ThingStyleDef>
 ```
 
-`fromMod` takes a packageId: `Ludeon.RimWorld` for the base game, `Ludeon.RimWorld.Biotech` and the like for a DLC, or
-any mod's. It works with `Graphic_Single`, `Graphic_StackCount` and `Graphic_Random`, for the look's own graphic only:
-a `wornGraphicPath` or `uiIconPath` still shows whichever mod's art wins. When that mod isn't active or has no texture
-at the path, the look shows the normal art and the game logs a warning.
+To take the art from another mod, name it in `fromMod` by packageId: `Ludeon.RimWorld` for the base game,
+`Ludeon.RimWorld.Biotech` and the like for a DLC, or any mod's. A look shared by items from different mods names its
+mod too. Art from a mod works with `Graphic_Single`, `Graphic_StackCount` and `Graphic_Random`, for the look's own
+graphic only: a `wornGraphicPath` or `uiIconPath` still shows whichever mod's art wins. When that mod isn't active or
+has no texture at the path, the look shows the normal art and the game logs a warning.
 
 Icons in lists, like the gear tab and trade rows, show a styled item's full stack image at any stack size. Items on the
 map show the right image for their stack.
