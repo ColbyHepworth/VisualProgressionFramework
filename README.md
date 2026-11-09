@@ -117,7 +117,7 @@ not in the bill's own name ("Make ..."), which the game sets once at startup. Th
 has an `overrideLabel`, otherwise it's the item's normal name. Items keep the name of the age they were made in, and
 items without a look keep the normal name, except in rows that count several stacks of a type together, like a
 transport pod's contents. A material without a `stuffAdjective` keeps its name, because things made from it carry it.
-These update when a game starts or loads, and the moment Vanilla Factions Expanded - Tribals or 
+These update when a game starts or loads, and the moment Vanilla Factions Expanded - Tribals or
 Node Research changes your colony's age. Without either of them, it checks about once an in game hour. Items with
 their own icon file (`uiIconPath` or `uiIconPathsStuff`) keep their normal icon there, because copies without a look
 would show the swapped icon too. The fuel icon on refuelable buildings and the medical care icons follow your colony's
