@@ -33,11 +33,11 @@ namespace VisualProgression
                     "which isn't active, so it shows the normal art.", ("VP_FromMod_" + look).GetHashCode());
                 return;
             }
-            Texture2D texture = TextureIn(mod, req.path);
+            Texture2D texture = ModOwnTextures.From(mod, req.path, out string problem);
             if (texture == null)
             {
-                Log.WarningOnce($"[Visual Progression] {fromModData.fromMod} has no texture at {req.path}, so that look " +
-                    "shows the normal art.", ("VP_FromMod_" + req.path).GetHashCode());
+                Log.WarningOnce($"[Visual Progression] {fromModData.fromMod} doesn't give the image at {req.path} ({problem}), so " +
+                    "that look shows the normal art.", ("VP_FromMod_" + req.path).GetHashCode());
                 return;
             }
             req.texture = texture;
@@ -58,17 +58,6 @@ namespace VisualProgression
                 }
             }
             return null;
-        }
-
-        // The base game keeps its own art in its built-in resources rather than in its mod files.
-        private static Texture2D TextureIn(ModContentPack mod, string path)
-        {
-            Texture2D texture = mod.GetContentHolder<Texture2D>().Get(path);
-            if (texture == null && mod.IsCoreMod)
-            {
-                texture = Resources.Load<Texture2D>(GenFilePaths.ContentPath<Texture2D>() + path);
-            }
-            return texture;
         }
     }
 }
