@@ -67,14 +67,15 @@ namespace VisualProgression
             }
         }
 
-        /// <summary>The item's own icon when it has looks, or null.</summary>
-        internal static Texture OwnIcon(Thing item)
+        /// <summary>The item's own icon when it has looks, or null, with the material it's drawn with, such as its mask's.</summary>
+        internal static Texture OwnIcon(Thing item, out Material material)
         {
+            material = null;
             if (item.TryGetComp<CompAgeLook>() == null)
             {
                 return null;
             }
-            return Widgets.GetIconFor(item, ButtonIconSize, null, false, out _, out _, out _, out _, out _);
+            return Widgets.GetIconFor(item, ButtonIconSize, null, false, out _, out _, out _, out _, out material);
         }
 
         // Buttons are made every frame while something is selected, so an error here is logged once and the button keeps
@@ -83,12 +84,17 @@ namespace VisualProgression
         {
             try
             {
-                Texture icon = OwnIcon(item);
+                Texture icon = OwnIcon(item, out Material material);
                 if (icon == null)
                 {
                     return false;
                 }
                 command.icon = icon;
+                // A disabled button draws grey through its own material, which this would replace.
+                if (material != null && !command.Disabled)
+                {
+                    command.overrideMaterial = material;
+                }
                 return true;
             }
             catch (Exception e)

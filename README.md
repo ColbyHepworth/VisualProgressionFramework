@@ -125,7 +125,8 @@ Node Research changes your colony's age. Without either of them, it checks about
 their own icon file (`uiIconPath` or `uiIconPathsStuff`) keep their normal icon there, because copies without a look
 would show the swapped icon too. The fuel icon on refuelable buildings and the medical care icons follow your colony's
 age the same way. Buttons for a real item, like taking a drug, using an item or an apparel ability, show that item's
-own look.
+own look. A look drawn through a mask (`CutoutComplex`) shows its mask in icons and on those buttons too, as items without a look
+do. The type's icon leaves it out for items made from a material and for looks with their own icon file.
 
 To test your rows, turn on dev mode and use "Set colony tech level..." under Visual Progression in the debug actions
 menu. Icons and names switch to the new age at once. Raise it one age at a time, because Vanilla Factions Expanded - Tribals

@@ -146,12 +146,16 @@ namespace VisualProgression
             private void ShowIconFor(TechLevel age)
             {
                 int rowIndex = AgeLookTable.RowFor(upToAges, (int)age);
-                Texture2D styleIcon = rowIndex >= 0 ? looks[rowIndex].style?.UIIcon : null;
-                if (styleIcon != null)
+                ThingStyleDef style = rowIndex >= 0 ? looks[rowIndex].style : null;
+                if (style?.UIIcon != null)
                 {
-                    // Drawn as the game draws a style's icon: no material, the type's icon color.
-                    def.uiIcon = styleIcon;
-                    def.uiIconMaterial = null;
+                    // Drawn as the game draws a style's icon, in the type's icon color, unless the look draws through a
+                    // mask. A material would drop the color of the default material for items made from one, and an
+                    // icon file of the look's own isn't the picture the mask is shaped for.
+                    def.uiIcon = style.UIIcon;
+                    def.uiIconMaterial = def.MadeFromStuff || style.Graphic == null || !style.uiIconPath.NullOrEmpty()
+                        ? null
+                        : LookIconMaterials.IconMaterialFor(style.Graphic.ExtractInnerGraphicFor(null).MatAt(Rot4.North));
                 }
                 else
                 {

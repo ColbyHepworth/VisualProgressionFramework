@@ -32,6 +32,7 @@ namespace VisualProgression
             TryPatch(harmony, typeof(ItemButtonIconHooks.DrugButton), "the take-drug button shows the type's icon");
             TryPatch(harmony, typeof(ItemButtonIconHooks.UseButton), "items' use buttons show the type's icon");
             TryPatch(harmony, typeof(ItemButtonIconHooks.ApparelAbilityButton), "apparel ability buttons show the type's icon");
+            TryPatch(harmony, typeof(LookIconMaterials.ItemIcon), "items with a masked look show it without the mask in their icons");
             AgeChangeHooks.Apply(harmony);
         }
 
