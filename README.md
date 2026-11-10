@@ -104,8 +104,11 @@ patch has no mod of its own, so its look names the mod:
 
 To take the art from another mod, name it in `fromMod` by packageId: `Ludeon.RimWorld` for the base game,
 `Ludeon.RimWorld.Biotech` and the like for a DLC, or any mod's. A look shared by items from different mods names its
-mod too. Art from a mod works with `Graphic_Single`, `Graphic_StackCount` and `Graphic_Random`, for the look's own
-graphic only: a `wornGraphicPath` or `uiIconPath` still shows whichever mod's art wins. When that mod isn't active or
+mod too. Art from a mod works with `Graphic_Single`, `Graphic_StackCount`, `Graphic_Random` and `Graphic_Multi` (the
+four facings most buildings and furniture use), masks included, so a material colours the parts that mod's mask
+marks. A `maskPath` of the look's own is read from that mod too, or found as usual when that mod doesn't have it. It
+covers the look's own graphic, its blueprint and placing preview, and packed furniture: a `wornGraphicPath` or
+`uiIconPath` still shows whichever mod's art wins, and so do walls and other art that joins its neighbours. When that mod isn't active or
 has no texture at the path, the look shows the normal art and the game logs a warning.
 
 Icons in lists, like the gear tab and trade rows, show a styled item's full stack image at any stack size. Items on the

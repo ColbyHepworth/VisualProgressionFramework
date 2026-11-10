@@ -23,7 +23,12 @@ namespace VisualProgression
             TryPatch(harmony, typeof(MadeItemLookHook.DuringSurgery), "surgeries aren't watched, so their products keep their normal art");
             TryPatch(harmony, typeof(StyleDominanceHook), "Ideology counts things with a look as another ideology's style");
             TryPatch(harmony, typeof(ItemNameHook), "items without a named look show the type's current-age name");
-            TryPatch(harmony, typeof(ArtFromModHook), "looks that name a mod's art show the normal art");
+            TryPatch(harmony, typeof(ArtFromModHooks.SinglePicture), "looks that name a mod's art show the normal art");
+            TryPatch(harmony, typeof(ArtFromModHooks.SingleMask), "looks that name a mod's art take the normal mask");
+            TryPatch(harmony, typeof(ArtFromModHooks.FacingPictures), "buildings' looks that name a mod's art show the normal art");
+            TryPatch(harmony, typeof(ArtFromModHooks.BlueprintArt), "blueprints of looks that name a mod's art show the normal art");
+            TryPatch(harmony, typeof(ArtFromModHooks.GhostArt), "placing previews of looks that name a mod's art show the normal art");
+            TryPatch(harmony, typeof(ArtFromModHooks.ResizedCopyArt), "packed furniture bigger than one tile shows the normal art");
             TryPatch(harmony, typeof(ItemButtonIconHooks.DrugButton), "the take-drug button shows the type's icon");
             TryPatch(harmony, typeof(ItemButtonIconHooks.UseButton), "items' use buttons show the type's icon");
             TryPatch(harmony, typeof(ItemButtonIconHooks.ApparelAbilityButton), "apparel ability buttons show the type's icon");
