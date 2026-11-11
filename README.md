@@ -66,8 +66,8 @@ their settings instead, and things buildings and animals produce on their own, l
 eggs, keep their normal art. Items a new game starts with, from the scenario and your colonists starting possessions,
 get the look of the age your colony starts in. Items traders sell, and the clothes, weapons and inventory of pawns
 from other factions, get the look of that faction's age. So do the items lying on a map another faction owns when
-the game generates it, like a base's stockpile. Orbital traders, pawns with no faction, raid loot, quest rewards and
-items found on a map no faction owns keep their normal art. If an ideology gives the item a style, that style wins.
+the game generates it, like a base's stockpile. Orbital traders, pawns with no faction, raid loot, quest rewards sent
+to you and items found on a map no faction owns keep their normal art. If an ideology gives the item a style, that style wins.
 
 Buildings get the look of their builder's age when construction finishes: your colony's, or for a building another
 faction puts up, that faction's. A rebuilt or copied building takes the current age too. While you place a building
@@ -75,7 +75,7 @@ and while its blueprint waits, it shows the look of the age it was placed in, th
 finished in. A frame shows the game's plain frame. Buildings
 a new game starts with get the age your colony starts in, or their own faction's, buildings placed in god mode get
 your colony's, and furniture made at a bench gets your colony's age like any item. Another faction's buildings on a
-map the game generates, like its base, get that faction's age. Furniture bought from traders and ruins keep their
+map the game generates, like its base, get that faction's age. Ruins and furniture bought from traders keep their
 normal art.
 
 The look is held in the item's style slot, the same one ideology styles use, so an item can have one or the other.
