@@ -19,8 +19,10 @@ namespace VisualProgression
             TryPatch(harmony, typeof(FinishedBuildingLookHook), "finished buildings keep their normal art");
             TryPatch(harmony, typeof(BuildingPreviewLookHooks.PlacingLook), "buildings show their normal art while they're placed and as blueprints");
             TryPatch(harmony, typeof(BuildingPreviewLookHooks.BlueprintLook), "rebuilt buildings' blueprints show the look of the age the old one was built in");
-            TryPatch(harmony, typeof(MadeItemLookHook.MadeItem), "new items never get a look as they're made, so surgery and job products keep their normal art");
+            TryPatch(harmony, typeof(MadeItemLookHook.MadeItem), "new items never get a look as they're made, so surgery, gathering and job products keep their normal art");
             TryPatch(harmony, typeof(MadeItemLookHook.DuringSurgery), "surgeries aren't watched, so their products keep their normal art");
+            TryPatch(harmony, typeof(MadeItemLookHook.DuringGathering), "gathering from animals isn't watched, so milk, wool and the like keep their normal art");
+            TryPatch(harmony, typeof(MadeItemLookHook.DuringExpandedGathering), "gathering from Vanilla Expanded animals isn't watched, so their products keep their normal art");
             TryPatch(harmony, typeof(StyleDominanceHook), "Ideology counts things with a look as another ideology's style");
             TryPatch(harmony, typeof(ItemNameHook), "items without a named look show the type's current-age name");
             TryPatch(harmony, typeof(ArtFromModHooks.SinglePicture), "looks that name a mod's art show the normal art");

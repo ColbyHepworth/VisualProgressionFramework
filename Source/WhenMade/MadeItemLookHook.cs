@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using HarmonyLib;
 using RimWorld;
 using Verse;
@@ -7,15 +8,16 @@ using Verse;
 namespace VisualProgression
 {
     /// <summary>
-    /// Gives items a surgery produces, like hemogen packs and ova, and items a colonist's job makes by name (found by
-    /// <see cref="JobProductLookHook"/>) the look of the colony's age. Both make and place their items themselves instead
-    /// of going through a bill's crafting step, so an item gets its look as it's made, before it can join a stack on the
-    /// ground. Body parts and implants removed from a body weren't made then, so they keep their normal art.
+    /// Gives items a surgery produces, like hemogen packs and ova, items gathered from an animal, like milk, wool and a
+    /// boomalope's chemfuel, and items a colonist's job makes by name (found by <see cref="JobProductLookHook"/>) the look
+    /// of the colony's age. They all make and place their items themselves instead of going through a bill's crafting
+    /// step, so an item gets its look as it's made, before it can join a stack on the ground. Body parts and implants
+    /// removed from a body weren't made then, so they keep their normal art.
     /// </summary>
     public static class MadeItemLookHook
     {
         private const int WarningKey = 0x56504735;
-        private static bool makingSurgeryProducts;
+        private static bool makingProducts;
         private static HashSet<ThingDef> removableParts;
 
         [HarmonyPatch(typeof(Bill_Medical), nameof(Bill_Medical.Notify_IterationCompleted))]
@@ -23,13 +25,58 @@ namespace VisualProgression
         {
             private static void Prefix(out bool __state)
             {
-                __state = makingSurgeryProducts;
-                makingSurgeryProducts = true;
+                __state = makingProducts;
+                makingProducts = true;
             }
 
             private static void Finalizer(bool __state)
             {
-                makingSurgeryProducts = __state;
+                makingProducts = __state;
+            }
+        }
+
+        /// <summary>The game's milking and shearing, and mods' that build on it, gather through this one method.</summary>
+        [HarmonyPatch(typeof(CompHasGatherableBodyResource), nameof(CompHasGatherableBodyResource.Gathered))]
+        public static class DuringGathering
+        {
+            private static void Prefix(out bool __state)
+            {
+                __state = makingProducts;
+                makingProducts = true;
+            }
+
+            private static void Finalizer(bool __state)
+            {
+                makingProducts = __state;
+            }
+        }
+
+        /// <summary>
+        /// Animals from Vanilla Expanded mods (and others using its animal products) are gathered by its own job, which
+        /// skips <see cref="CompHasGatherableBodyResource.Gathered"/>.
+        /// </summary>
+        [HarmonyPatch]
+        public static class DuringExpandedGathering
+        {
+            private static bool Prepare()
+            {
+                return ModsConfig.IsActive("OskarPotocki.VanillaFactionsExpanded.Core") && TargetMethod() != null;
+            }
+
+            private static MethodBase TargetMethod()
+            {
+                return AccessTools.Method("VEF.AnimalBehaviours.CompAnimalProduct:InformGathered");
+            }
+
+            private static void Prefix(out bool __state)
+            {
+                __state = makingProducts;
+                makingProducts = true;
+            }
+
+            private static void Finalizer(bool __state)
+            {
+                makingProducts = __state;
             }
         }
 
@@ -38,11 +85,11 @@ namespace VisualProgression
         {
             private static void Postfix(Thing __result)
             {
-                if (__result == null || (!makingSurgeryProducts && !JobProductLookHook.IsMaking(__result.def)))
+                if (__result == null || (!makingProducts && !JobProductLookHook.IsMaking(__result.def)))
                 {
                     return;
                 }
-                // An error here would stop the surgery or job partway, after its other effects.
+                // An error here would stop the surgery, gathering or job partway, after its other effects.
                 try
                 {
                     if (!RemovableParts().Contains(__result.def))
