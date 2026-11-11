@@ -59,14 +59,9 @@ namespace VisualProgression
             {
                 foreach (Thing item in ItemsWithLooks(map).Where(item => !itemsBefore.Contains(item)))
                 {
-                    CompAgeLook look = item.TryGetComp<CompAgeLook>();
-                    ThingStyleDef styleBefore = item.StyleDef;
                     // Another faction's buildings, like an enemy castle a scenario builds, take that faction's age.
-                    look.ApplyLookForFactionAge(item.Faction != null && !item.Faction.IsPlayer ? item.Faction : Faction.OfPlayer);
-                    if (item.Spawned && item.StyleDef != styleBefore)
-                    {
-                        item.DirtyMapMesh(map);
-                    }
+                    Faction madeBy = item.Faction != null && !item.Faction.IsPlayer ? item.Faction : Faction.OfPlayer;
+                    MapThingLook.GiveFactionAge(item, madeBy, map);
                 }
             }
             catch (Exception e)

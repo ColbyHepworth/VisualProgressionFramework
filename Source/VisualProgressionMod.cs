@@ -15,6 +15,7 @@ namespace VisualProgression
             TryPatch(harmony, typeof(CraftedItemLookHook), "crafted items keep their normal art");
             TryPatch(harmony, typeof(StartingItemsLookHook.WhileMapIsMade), "starting items keep their normal art");
             TryPatch(harmony, typeof(StartingItemsLookHook.AfterMapIsMade), "starting items added after the map keep their normal art");
+            TryPatch(harmony, typeof(FactionMapLookHook), "other factions' bases and sites keep their normal art");
             TryPatch(harmony, typeof(PawnGearLookHook), "pawns' gear keeps its normal art");
             TryPatch(harmony, typeof(FinishedBuildingLookHook), "finished buildings keep their normal art");
             TryPatch(harmony, typeof(BuildingPreviewLookHooks.PlacingLook), "buildings show their normal art while they're placed and as blueprints");
