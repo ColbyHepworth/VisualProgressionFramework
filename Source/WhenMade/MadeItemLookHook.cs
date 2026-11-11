@@ -11,27 +11,31 @@ namespace VisualProgression
     /// Gives items a surgery produces, like hemogen packs and ova, items gathered from an animal, like milk, wool and a
     /// boomalope's chemfuel, and items a colonist's job makes by name (found by <see cref="JobProductLookHook"/>) the look
     /// of the colony's age. They all make and place their items themselves instead of going through a bill's crafting
-    /// step, so an item gets its look as it's made, before it can join a stack on the ground. Body parts and implants
-    /// removed from a body weren't made then, so they keep their normal art.
+    /// step, so an item gets its look as it's made, before it can join a stack on the ground. A harvested organ gets the
+    /// colony's age too. An implant removed from a body gets the age of the patient's faction, since it came from them.
     /// </summary>
     public static class MadeItemLookHook
     {
         private const int WarningKey = 0x56504735;
         private static bool makingProducts;
-        private static HashSet<ThingDef> removableParts;
+        private static Faction surgeryPatientFaction;
+        private static HashSet<ThingDef> implants;
 
         [HarmonyPatch(typeof(Bill_Medical), nameof(Bill_Medical.Notify_IterationCompleted))]
         public static class DuringSurgery
         {
-            private static void Prefix(out bool __state)
+            // Read before the operation runs, since it can kill the patient.
+            private static void Prefix(Bill_Medical __instance, out (bool makingProducts, Faction patientFaction) __state)
             {
-                __state = makingProducts;
+                __state = (makingProducts, surgeryPatientFaction);
                 makingProducts = true;
+                surgeryPatientFaction = __instance.GiverPawn?.Faction;
             }
 
-            private static void Finalizer(bool __state)
+            private static void Finalizer((bool makingProducts, Faction patientFaction) __state)
             {
-                makingProducts = __state;
+                makingProducts = __state.makingProducts;
+                surgeryPatientFaction = __state.patientFaction;
             }
         }
 
@@ -92,9 +96,19 @@ namespace VisualProgression
                 // An error here would stop the surgery, gathering or job partway, after its other effects.
                 try
                 {
-                    if (!RemovableParts().Contains(__result.def))
+                    CompAgeLook look = __result.TryGetComp<CompAgeLook>();
+                    if (look == null)
                     {
-                        __result.TryGetComp<CompAgeLook>()?.ApplyLookForColonyAge();
+                        return;
+                    }
+                    // Outside a surgery there's no patient, so an implant a job makes keeps its normal art.
+                    if (Implants().Contains(__result.def))
+                    {
+                        look.ApplyLookForFactionAge(surgeryPatientFaction);
+                    }
+                    else
+                    {
+                        look.ApplyLookForColonyAge();
                     }
                 }
                 catch (Exception e)
@@ -104,29 +118,23 @@ namespace VisualProgression
             }
         }
 
-        // Items that come out of a body when a part or implant is removed. Several game and mod surgeries spawn them, each
-        // its own way, so they're recognized by what they are rather than by which surgery made them.
-        private static HashSet<ThingDef> RemovableParts()
+        // Items that come out of a body when an implant is removed, like bionics, glands or a peg leg's wood. Several game
+        // and mod surgeries spawn them, each its own way, so they're recognized by what they are rather than by which
+        // surgery made them. Natural organs come from body parts instead, and get the colony's age like other products.
+        private static HashSet<ThingDef> Implants()
         {
-            if (removableParts == null)
+            if (implants == null)
             {
-                removableParts = new HashSet<ThingDef>();
+                implants = new HashSet<ThingDef>();
                 foreach (HediffDef hediff in DefDatabase<HediffDef>.AllDefsListForReading)
                 {
                     if (hediff.spawnThingOnRemoved != null)
                     {
-                        removableParts.Add(hediff.spawnThingOnRemoved);
-                    }
-                }
-                foreach (BodyPartDef part in DefDatabase<BodyPartDef>.AllDefsListForReading)
-                {
-                    if (part.spawnThingOnRemoved != null)
-                    {
-                        removableParts.Add(part.spawnThingOnRemoved);
+                        implants.Add(hediff.spawnThingOnRemoved);
                     }
                 }
             }
-            return removableParts;
+            return implants;
         }
     }
 }
