@@ -158,4 +158,8 @@ overshoots on bigger jumps. The level isn't saved unless a mod like that saves i
 
 ## License
 
-MIT
+MIT. The images in `Workshop/` show art from Rustic Meal Retexture, Medieval Overhaul,
+[Van's Retexture : Hemogen Vials](https://steamcommunity.com/sharedfiles/filedetails/?id=3453224032) and
+[Van's Retexture : Organ jars](https://steamcommunity.com/sharedfiles/filedetails/?id=3541295970) by SirVan (CC BY 4.0),
+Chemfuel Retextured : For Medieval and Tribal, Chemfuel Retexture, Bionic icons by AUTOMATIC (MIT) and RimWorld. It
+belongs to their authors and isn't covered by this license.
