@@ -113,6 +113,26 @@ covers the look's own graphic, its blueprint and placing preview, and packed fur
 `uiIconPath` still shows whichever mod's art wins, and so do walls and other art that joins its neighbours. When that mod isn't active or
 has no texture at the path, the look shows the normal art and the game logs a warning.
 
+A pack whose own retexture sits at the game's path can leave the other ages to whatever retexture the player has. List
+its mods in `skipMods` instead of naming a `fromMod`: the art then comes from the mod the game would pick at that path
+with those mods passed over, such as an upscale, or the base game's when there's none. A listed mod that isn't active
+is ignored, so a pack can list optional ones. With both set, `fromMod` wins. Art that a mod has only in an asset bundle
+isn't found this way.
+
+```xml
+<ThingStyleDef>
+  <defName>MyMod_HemogenPack_Bag</defName>
+  <graphicData Class="VisualProgression.GraphicData_FromMod">
+    <texPath>Things/Item/Resource/HemogenPack</texPath>
+    <skipMods>
+      <li>sirvan.hemogentexture</li>
+    </skipMods>
+  </graphicData>
+</ThingStyleDef>
+```
+
+An item's own graphic data can be a `GraphicData_FromMod` too, for copies with no look.
+
 Icons in lists, like the gear tab and trade rows, show a styled item's full stack image at any stack size. Items on the
 map show the right image for their stack.
 

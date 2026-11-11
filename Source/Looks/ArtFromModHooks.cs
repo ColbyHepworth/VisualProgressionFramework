@@ -7,8 +7,8 @@ using Verse;
 namespace VisualProgression
 {
     /// <summary>
-    /// Gives a look with <see cref="GraphicData_FromMod"/> the named mod's pictures and masks. The game looks a path up in
-    /// the last loaded mod first, so a retexture at the same path would otherwise win.
+    /// Gives a look with <see cref="GraphicData_FromMod"/> the chosen mod's pictures and masks. The game looks a path up in
+    /// the last loaded mod first, so a retexture at the same path would otherwise win, even one the look skips.
     /// </summary>
     public static class ArtFromModHooks
     {
@@ -26,7 +26,8 @@ namespace VisualProgression
                 {
                     return;
                 }
-                ModContentPack mod = ChosenMod(fromModData);
+                string path = req.path;
+                ModContentPack mod = ChosenMod(fromModData, path, candidate => ModOwnTextures.From(candidate, path, out _) != null);
                 if (mod == null)
                 {
                     return;
@@ -34,8 +35,8 @@ namespace VisualProgression
                 Texture2D texture = ModOwnTextures.From(mod, req.path, out string problem);
                 if (texture == null)
                 {
-                    Log.WarningOnce($"[Visual Progression] {fromModData.fromMod} doesn't give the image at {req.path} ({problem}), so " +
-                        "that look shows the normal art.", ("VP_FromModNoArt_" + fromModData.fromMod + req.path).GetHashCode());
+                    Log.WarningOnce($"[Visual Progression] {SourceOf(fromModData)} doesn't give the image at {req.path} ({problem}), so " +
+                        "that look shows the normal art.", ("VP_FromModNoArt_" + SourceOf(fromModData) + req.path).GetHashCode());
                     return;
                 }
                 req.texture = texture;
@@ -61,7 +62,8 @@ namespace VisualProgression
                 }
                 try
                 {
-                    ModContentPack mod = ChosenMod(fromModData);
+                    string path = req.path;
+                    ModContentPack mod = ChosenMod(fromModData, path, candidate => ModOwnTextures.From(candidate, path, out _) != null);
                     // A picture the mod doesn't have kept the normal art, so it keeps the normal mask too.
                     if (mod == null || ModOwnTextures.From(mod, req.path, out _) == null)
                     {
@@ -85,7 +87,7 @@ namespace VisualProgression
                 }
                 catch (Exception e)
                 {
-                    Log.WarningOnce($"[Visual Progression] Couldn't give the look at {req.path} its mask from {fromModData.fromMod}, so " +
+                    Log.WarningOnce($"[Visual Progression] Couldn't give the look at {req.path} its mask from {SourceOf(fromModData)}, so " +
                         "it takes the normal mask: " + e, ("VP_FromModMask_" + req.path).GetHashCode());
                 }
             }
@@ -123,7 +125,8 @@ namespace VisualProgression
                 }
                 try
                 {
-                    ModContentPack mod = ChosenMod(fromModData);
+                    string path = req.path;
+                    ModContentPack mod = ChosenMod(fromModData, path, candidate => HasFacingArt(candidate, path));
                     if (mod == null)
                     {
                         return;
@@ -159,8 +162,8 @@ namespace VisualProgression
                     }
                     if (pictures[North] == null)
                     {
-                        Log.WarningOnce($"[Visual Progression] {fromModData.fromMod} has no facing images at {req.path}, so " +
-                            "that look shows the normal art.", ("VP_FromModNoArt_" + fromModData.fromMod + req.path).GetHashCode());
+                        Log.WarningOnce($"[Visual Progression] {SourceOf(fromModData)} has no facing images at {req.path}, so " +
+                            "that look shows the normal art.", ("VP_FromModNoArt_" + SourceOf(fromModData) + req.path).GetHashCode());
                         return;
                     }
                     bool allowsFlip = req.graphicData.allowFlip;
@@ -226,9 +229,22 @@ namespace VisualProgression
                 }
                 catch (Exception e)
                 {
-                    Log.WarningOnce($"[Visual Progression] Couldn't give the look at {req.path} its art from {fromModData.fromMod}, so " +
+                    Log.WarningOnce($"[Visual Progression] Couldn't give the look at {req.path} its art from {SourceOf(fromModData)}, so " +
                         "it shows the normal art: " + e, ("VP_FromModFacings_" + req.path).GetHashCode());
                 }
+            }
+
+            // Any facing's image, or the one image drawn for every facing.
+            private static bool HasFacingArt(ModContentPack mod, string path)
+            {
+                foreach (string suffix in Suffixes)
+                {
+                    if (ModOwnTextures.From(mod, path + suffix, out _) != null)
+                    {
+                        return true;
+                    }
+                }
+                return ModOwnTextures.From(mod, path, out _) != null;
             }
 
             private static Texture2D GameMask(Material material)
@@ -267,7 +283,7 @@ namespace VisualProgression
                     }
                     if (!lookGhosts.TryGetValue(__result, out Graphic ghost))
                     {
-                        GraphicData_FromMod ghostData = new GraphicData_FromMod { fromMod = fromModData.fromMod };
+                        GraphicData_FromMod ghostData = fromModData.CopyArtSource();
                         ghostData.CopyFrom(__result.data);
                         ghost = GraphicDatabase.Get(__result.GetType(), __result.path, __result.Shader, __result.drawSize,
                             __result.color, __result.colorTwo, ghostData, null, __result.maskPath);
@@ -278,15 +294,15 @@ namespace VisualProgression
                 catch (Exception e)
                 {
                     Log.WarningOnce($"[Visual Progression] Couldn't keep the placing preview of the look at {baseGraphic.path} on " +
-                        $"{fromModData.fromMod}'s art, so it shows the normal art: " + e, ("VP_FromModGhost_" + baseGraphic.path).GetHashCode());
+                        $"art from {SourceOf(fromModData)}, so it shows the normal art: " + e, ("VP_FromModGhost_" + baseGraphic.path).GetHashCode());
                 }
             }
         }
 
         /// <summary>
         /// Keeps a resized copy of a look's graphic, like packed furniture bigger than one tile, on the chosen mod's art. The
-        /// game makes the copy without graphic data, so it's made again with data that names only the mod, which is what the
-        /// art hooks read; every other setting keeps the game's default, as for a copy without data.
+        /// game makes the copy without graphic data, so it's made again with data that names only where the art comes from,
+        /// which is what the art hooks read; every other setting keeps the game's default, as for a copy without data.
         /// </summary>
         [HarmonyPatch(typeof(Graphic), nameof(Graphic.GetCopy), new[] { typeof(Vector2), typeof(Shader) })]
         public static class ResizedCopyArt
@@ -305,7 +321,8 @@ namespace VisualProgression
                 {
                     if (!copyData.TryGetValue(fromModData, out GraphicData_FromMod data))
                     {
-                        data = new GraphicData_FromMod { fromMod = fromModData.fromMod, texPath = fromModData.texPath };
+                        data = fromModData.CopyArtSource();
+                        data.texPath = fromModData.texPath;
                         copyData[fromModData] = data;
                     }
                     __result = GraphicDatabase.Get(__instance.GetType(), __instance.path, overrideShader ?? __instance.Shader,
@@ -314,7 +331,7 @@ namespace VisualProgression
                 catch (Exception e)
                 {
                     Log.WarningOnce($"[Visual Progression] Couldn't keep a resized copy of the look at {__instance.path} on " +
-                        $"{fromModData.fromMod}'s art, so it shows the normal art: " + e, ("VP_FromModCopy_" + __instance.path).GetHashCode());
+                        $"art from {SourceOf(fromModData)}, so it shows the normal art: " + e, ("VP_FromModCopy_" + __instance.path).GetHashCode());
                 }
             }
         }
@@ -335,26 +352,39 @@ namespace VisualProgression
                 }
                 try
                 {
-                    GraphicData_FromMod blueprint = new GraphicData_FromMod { fromMod = fromModData.fromMod };
+                    GraphicData_FromMod blueprint = fromModData.CopyArtSource();
                     blueprint.CopyFrom(__instance.blueprintGraphicData);
                     __instance.blueprintGraphicData = blueprint;
                 }
                 catch (Exception e)
                 {
-                    Log.WarningOnce($"[Visual Progression] Couldn't keep the blueprint of {__instance.defName} on {fromModData.fromMod}'s " +
-                        "art, so it shows the normal art: " + e, ("VP_FromModBlueprint_" + __instance.defName).GetHashCode());
+                    Log.WarningOnce($"[Visual Progression] Couldn't keep the blueprint of {__instance.defName} on art from " +
+                        $"{SourceOf(fromModData)}, so it shows the normal art: " + e, ("VP_FromModBlueprint_" + __instance.defName).GetHashCode());
                 }
             }
         }
 
-        /// <summary>The running mod a look's art comes from, or null (with a warning once per look) when it isn't active.</summary>
-        private static ModContentPack ChosenMod(GraphicData_FromMod fromModData)
+        /// <summary>
+        /// The running mod a graphic's art at the path comes from: the named mod, or with skipped mods the last loaded other
+        /// mod that has the art, as the game would pick it. Null (with a warning once) when there's none, and the game's
+        /// own lookup is used.
+        /// </summary>
+        private static ModContentPack ChosenMod(GraphicData_FromMod fromModData, string path, Func<ModContentPack, bool> hasArt)
         {
+            if (fromModData.SkipsMods)
+            {
+                return WinnerSkipping(fromModData, path, hasArt);
+            }
             // The item's own mod is filled in when references are resolved, and some loaders build graphics before that.
             // The look is built again once it's filled in, and an item without a mod gets its own warning then.
             if (fromModData.fromMod.NullOrEmpty())
             {
                 return null;
+            }
+            if (!fromModData.skipMods.NullOrEmpty())
+            {
+                Log.WarningOnce($"[Visual Progression] The look at {fromModData.texPath} names both a mod and mods to skip, " +
+                    $"so its art comes from {fromModData.fromMod}.", ("VP_FromModAndSkip_" + fromModData.texPath).GetHashCode());
             }
             ModContentPack mod = RunningMod(fromModData.fromMod);
             if (mod == null)
@@ -365,6 +395,53 @@ namespace VisualProgression
                     "which isn't active, so it shows the normal art.", ("VP_FromModInactive_" + fromModData.fromMod + look).GetHashCode());
             }
             return mod;
+        }
+
+        // The game looks a path up in the running mods from the last loaded to the first, then in Core's built-in
+        // resources, which ModOwnTextures checks with Core. So Core comes last.
+        private static ModContentPack WinnerSkipping(GraphicData_FromMod fromModData, string path, Func<ModContentPack, bool> hasArt)
+        {
+            List<ModContentPack> mods = LoadedModManager.RunningModsListForReading;
+            ModContentPack core = null;
+            for (int i = mods.Count - 1; i >= 0; i--)
+            {
+                if (mods[i].IsCoreMod)
+                {
+                    core = mods[i];
+                }
+                else if (!Skipped(fromModData, mods[i]) && hasArt(mods[i]))
+                {
+                    return mods[i];
+                }
+            }
+            if (core != null && !Skipped(fromModData, core) && hasArt(core))
+            {
+                return core;
+            }
+            Log.WarningOnce($"[Visual Progression] Only the mods it skips ({string.Join(", ", fromModData.skipMods)}) have art " +
+                $"at {path}, so it shows the normal art.",
+                ("VP_SkipModsNoArt_" + path).GetHashCode());
+            return null;
+        }
+
+        private static bool Skipped(GraphicData_FromMod fromModData, ModContentPack mod)
+        {
+            foreach (string packageId in fromModData.skipMods)
+            {
+                if (string.Equals(mod.PackageIdPlayerFacing, packageId, StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // Where a graphic's art comes from, for warnings.
+        private static string SourceOf(GraphicData_FromMod fromModData)
+        {
+            return fromModData.SkipsMods
+                ? "any mod but " + string.Join(", ", fromModData.skipMods)
+                : fromModData.fromMod;
         }
 
         private static ModContentPack RunningMod(string packageId)

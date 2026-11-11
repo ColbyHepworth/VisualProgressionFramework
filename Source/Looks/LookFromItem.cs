@@ -23,7 +23,7 @@ namespace VisualProgression
             Type itemGraphicClass = item.graphicData?.graphicClass;
             bool fillClass = lookGraphic.graphicClass == null && itemGraphicClass != null;
             string itemsMod = null;
-            if (lookGraphic is GraphicData_FromMod fromModData && fromModData.fromMod.NullOrEmpty())
+            if (lookGraphic is GraphicData_FromMod fromModData && fromModData.fromMod.NullOrEmpty() && fromModData.skipMods.NullOrEmpty())
             {
                 itemsMod = item.modContentPack?.PackageIdPlayerFacing;
                 if (itemsMod == null)
