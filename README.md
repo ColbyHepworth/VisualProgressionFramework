@@ -137,6 +137,12 @@ isn't found this way.
 
 An item's own graphic data can be a `GraphicData_FromMod` too, for copies with no look.
 
+Some buildings draw extra images over their art from their own code, like a bathtub's water or a toilet's raised lid.
+When such an image's path starts with the building's own art path (`bath` and `bathWater`), it comes from the same
+place as the building's art. A look's layer is its own path with the same ending, from its mod. Normal art that names a
+mod or skips some takes its layers the same way. A layer that mod doesn't have shows whichever mod's art wins, as
+before. Layers at other paths, and the size and offset the building's code gives a layer, stay as they are.
+
 Icons in lists, like the gear tab and trade rows, show a styled item's full stack image at any stack size. Items on the
 map show the right image for their stack.
 

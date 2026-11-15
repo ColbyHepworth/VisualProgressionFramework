@@ -36,6 +36,8 @@ namespace VisualProgression
             TryPatch(harmony, typeof(ArtFromModHooks.BlueprintArt), "blueprints of looks that name a mod's art show the normal art");
             TryPatch(harmony, typeof(ArtFromModHooks.GhostArt), "placing previews of looks that name a mod's art show the normal art");
             TryPatch(harmony, typeof(ArtFromModHooks.ResizedCopyArt), "packed furniture bigger than one tile shows the normal art");
+            TryPatch(harmony, typeof(LayerArt.LayerMaterial), "layers buildings draw over their art show the art of whichever mod wins");
+            TryPatch(harmony, typeof(LayerArt.SingleLayerMaterial), "single-picture layers buildings draw over their art show the art of whichever mod wins");
             TryPatch(harmony, typeof(ItemButtonIconHooks.DrugButton), "the take-drug button shows the type's icon");
             TryPatch(harmony, typeof(ItemButtonIconHooks.UseButton), "items' use buttons show the type's icon");
             TryPatch(harmony, typeof(ItemButtonIconHooks.ApparelAbilityButton), "apparel ability buttons show the type's icon");

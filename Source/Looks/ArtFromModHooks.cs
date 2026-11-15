@@ -103,10 +103,7 @@ namespace VisualProgression
             // Facings in the order Graphic_Multi keeps its materials: north, east, south, west.
             private const int North = 0, East = 1, South = 2, West = 3;
 
-            private static readonly string[] Suffixes =
-            {
-                Graphic_Multi.NorthSuffix, Graphic_Multi.EastSuffix, Graphic_Multi.SouthSuffix, Graphic_Multi.WestSuffix,
-            };
+            private static readonly string[] Suffixes = FacingSuffixes;
 
             private static readonly AccessTools.FieldRef<Graphic_Multi, Material[]> mats =
                 AccessTools.FieldRefAccess<Graphic_Multi, Material[]>("mats");
@@ -234,19 +231,6 @@ namespace VisualProgression
                 }
             }
 
-            // Any facing's image, or the one image drawn for every facing.
-            private static bool HasFacingArt(ModContentPack mod, string path)
-            {
-                foreach (string suffix in Suffixes)
-                {
-                    if (ModOwnTextures.From(mod, path + suffix, out _) != null)
-                    {
-                        return true;
-                    }
-                }
-                return ModOwnTextures.From(mod, path, out _) != null;
-            }
-
             private static Texture2D GameMask(Material material)
             {
                 return material != null && material.HasProperty(ShaderPropertyIDs.MaskTex)
@@ -364,16 +348,35 @@ namespace VisualProgression
             }
         }
 
+        /// <summary>Whether the mod has any facing's image at the path, or the one image drawn for every facing.</summary>
+        internal static bool HasFacingArt(ModContentPack mod, string path)
+        {
+            foreach (string suffix in FacingSuffixes)
+            {
+                if (ModOwnTextures.From(mod, path + suffix, out _) != null)
+                {
+                    return true;
+                }
+            }
+            return ModOwnTextures.From(mod, path, out _) != null;
+        }
+
+        private static readonly string[] FacingSuffixes =
+        {
+            Graphic_Multi.NorthSuffix, Graphic_Multi.EastSuffix, Graphic_Multi.SouthSuffix, Graphic_Multi.WestSuffix,
+        };
+
         /// <summary>
         /// The running mod a graphic's art at the path comes from: the named mod, or with skipped mods the last loaded other
-        /// mod that has the art, as the game would pick it. Null (with a warning once) when there's none, and the game's
-        /// own lookup is used.
+        /// mod that has the art, as the game would pick it. Null when there's none, and the game's own lookup is used.
+        /// It warns once about that unless <paramref name="quiet"/>.
         /// </summary>
-        private static ModContentPack ChosenMod(GraphicData_FromMod fromModData, string path, Func<ModContentPack, bool> hasArt)
+        internal static ModContentPack ChosenMod(GraphicData_FromMod fromModData, string path, Func<ModContentPack, bool> hasArt,
+            bool quiet = false)
         {
             if (fromModData.SkipsMods)
             {
-                return WinnerSkipping(fromModData, path, hasArt);
+                return WinnerSkipping(fromModData, path, hasArt, quiet);
             }
             // The item's own mod is filled in when references are resolved, and some loaders build graphics before that.
             // The look is built again once it's filled in, and an item without a mod gets its own warning then.
@@ -381,13 +384,13 @@ namespace VisualProgression
             {
                 return null;
             }
-            if (!fromModData.skipMods.NullOrEmpty())
+            if (!fromModData.skipMods.NullOrEmpty() && !quiet)
             {
                 Log.WarningOnce($"[Visual Progression] The look at {fromModData.texPath} names both a mod and mods to skip, " +
                     $"so its art comes from {fromModData.fromMod}.", ("VP_FromModAndSkip_" + fromModData.texPath).GetHashCode());
             }
             ModContentPack mod = RunningMod(fromModData.fromMod);
-            if (mod == null)
+            if (mod == null && !quiet)
             {
                 // Stack and random graphics come here once per image, so this warns once per look.
                 string look = fromModData.texPath;
@@ -399,7 +402,8 @@ namespace VisualProgression
 
         // The game looks a path up in the running mods from the last loaded to the first, then in Core's built-in
         // resources, which ModOwnTextures checks with Core. So Core comes last.
-        private static ModContentPack WinnerSkipping(GraphicData_FromMod fromModData, string path, Func<ModContentPack, bool> hasArt)
+        private static ModContentPack WinnerSkipping(GraphicData_FromMod fromModData, string path, Func<ModContentPack, bool> hasArt,
+            bool quiet)
         {
             List<ModContentPack> mods = LoadedModManager.RunningModsListForReading;
             ModContentPack core = null;
@@ -417,6 +421,10 @@ namespace VisualProgression
             if (core != null && !Skipped(fromModData, core) && hasArt(core))
             {
                 return core;
+            }
+            if (quiet)
+            {
+                return null;
             }
             Log.WarningOnce($"[Visual Progression] Only the mods it skips ({string.Join(", ", fromModData.skipMods)}) have art " +
                 $"at {path}, so it shows the normal art.",
