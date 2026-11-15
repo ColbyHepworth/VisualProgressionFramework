@@ -55,6 +55,19 @@ namespace VisualProgression
             return rowIndex >= 0 ? looks[rowIndex].style : null;
         }
 
+        /// <summary>
+        /// The look the faction's age gives, or null where the item keeps its normal art: with no faction, a faction with
+        /// no tech level, or an age past the last row.
+        /// </summary>
+        public ThingStyleDef LookFor(Faction faction)
+        {
+            if (faction == null || faction.def.techLevel == TechLevel.Undefined)
+            {
+                return null;
+            }
+            return LookFor(faction.def.techLevel);
+        }
+
         /// <summary>Whether the style is one of the item's age looks, not an ideology's.</summary>
         public bool IsAgeLook(ThingStyleDef style)
         {

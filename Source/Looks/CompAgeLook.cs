@@ -24,11 +24,11 @@ namespace VisualProgression
         /// </summary>
         public void ApplyLookForFactionAge(Faction faction)
         {
-            if (faction == null || faction.def.techLevel == TechLevel.Undefined || parent.StyleDef != null || parent.StyleSourcePrecept != null)
+            if (parent.StyleDef != null || parent.StyleSourcePrecept != null)
             {
                 return;
             }
-            ThingStyleDef look = Props.LookFor(faction.def.techLevel);
+            ThingStyleDef look = Props.LookFor(faction);
             if (look != null)
             {
                 parent.StyleDef = look;

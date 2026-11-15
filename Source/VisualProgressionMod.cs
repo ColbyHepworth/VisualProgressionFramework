@@ -26,6 +26,7 @@ namespace VisualProgression
             TryPatch(harmony, typeof(MadeItemLookHook.DuringExpandedGathering), "gathering from Vanilla Expanded animals isn't watched, so their products keep their normal art");
             TryPatch(harmony, typeof(StyleDominanceHook), "Ideology counts things with a look as another ideology's style");
             TryPatch(harmony, typeof(TradeSilverRowHook), "silver with different looks is listed apart in a trade, and only the first row counts as money");
+            TryPatch(harmony, typeof(TradeSilverRowLookHook), "a trade's silver row shows the colony's first silver stack, not the trader's silver");
             TryPatch(harmony, typeof(ItemNameHook), "items without a named look show the type's current-age name");
             TryPatch(harmony, typeof(ArtFromModHooks.SinglePicture), "looks that name a mod's art show the normal art");
             TryPatch(harmony, typeof(ArtFromModHooks.SingleMask), "looks that name a mod's art take the normal mask");
