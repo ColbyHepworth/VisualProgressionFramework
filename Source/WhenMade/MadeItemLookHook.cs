@@ -9,15 +9,17 @@ namespace VisualProgression
 {
     /// <summary>
     /// Gives items a surgery produces, like hemogen packs and ova, items gathered from an animal, like milk, wool and a
-    /// boomalope's chemfuel, and items a colonist's job makes by name (found by <see cref="JobProductLookHook"/>) the look
-    /// of the colony's age. They all make and place their items themselves instead of going through a bill's crafting
-    /// step, so an item gets its look as it's made, before it can join a stack on the ground. A harvested organ gets the
-    /// colony's age too. An implant removed from a body gets the age of the patient's faction, since it came from them.
+    /// boomalope's chemfuel, items the colony mines or deep drills, and items a colonist's job makes by name (found by
+    /// <see cref="JobProductLookHook"/>) the look of the colony's age. They all make and place their items themselves
+    /// instead of going through a bill's crafting step, so an item gets its look as it's made, before it can join a
+    /// stack on the ground. A harvested organ gets the colony's age too. An implant removed from a body gets the age of
+    /// the patient's faction, since it came from them.
     /// </summary>
     public static class MadeItemLookHook
     {
         private const int WarningKey = 0x56504735;
         private static bool makingProducts;
+        private static bool mining;
         private static Faction surgeryPatientFaction;
         private static HashSet<ThingDef> implants;
 
@@ -84,6 +86,60 @@ namespace VisualProgression
             }
         }
 
+        /// <summary>
+        /// What a rock drops when one of the colony's pawns mines it. Rock broken any other way, by an explosion or
+        /// another faction's pawn, drops items with their normal art.
+        /// </summary>
+        [HarmonyPatch(typeof(Mineable), "TrySpawnYield", new[] { typeof(Map), typeof(bool), typeof(Pawn) })]
+        public static class DuringMining
+        {
+            // First, so the mark also covers what other mods add to the yield in their own patches here.
+            [HarmonyPriority(Priority.First)]
+            private static void Prefix(Pawn pawn, out (bool makingProducts, bool mining) __state)
+            {
+                __state = (makingProducts, mining);
+                if (IsColonys(pawn))
+                {
+                    makingProducts = true;
+                    mining = true;
+                }
+            }
+
+            private static void Finalizer((bool makingProducts, bool mining) __state)
+            {
+                makingProducts = __state.makingProducts;
+                mining = __state.mining;
+            }
+        }
+
+        /// <summary>What a deep drill brings up when one of the colony's pawns works it.</summary>
+        [HarmonyPatch(typeof(CompDeepDrill), "TryProducePortion")]
+        public static class DuringDeepDrilling
+        {
+            [HarmonyPriority(Priority.First)]
+            private static void Prefix(Pawn driller, out (bool makingProducts, bool mining) __state)
+            {
+                __state = (makingProducts, mining);
+                if (IsColonys(driller))
+                {
+                    makingProducts = true;
+                    mining = true;
+                }
+            }
+
+            private static void Finalizer((bool makingProducts, bool mining) __state)
+            {
+                makingProducts = __state.makingProducts;
+                mining = __state.mining;
+            }
+        }
+
+        // The game's own test for whether mined ore is the colony's (Mineable.TrySpawnYield forbids it otherwise).
+        private static bool IsColonys(Pawn miner)
+        {
+            return miner != null && miner.Faction == Faction.OfPlayer;
+        }
+
         [HarmonyPatch(typeof(ThingMaker), nameof(ThingMaker.MakeThing))]
         public static class MadeItem
         {
@@ -101,8 +157,10 @@ namespace VisualProgression
                     {
                         return;
                     }
-                    // Outside a surgery there's no patient, so an implant a job makes keeps its normal art.
-                    if (Implants().Contains(__result.def))
+                    // Outside a surgery there's no patient, so an implant a job makes keeps its normal art. What
+                    // comes out of the ground is never an implant, even when some surgery gives the same item back,
+                    // like the wood of a peg leg.
+                    if (!mining && Implants().Contains(__result.def))
                     {
                         look.ApplyLookForFactionAge(surgeryPatientFaction);
                     }

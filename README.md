@@ -58,7 +58,9 @@ mod loaded last wins. An item the game makes at startup, like meat or corpses, c
 Items made by bills get the look of your colony's age, and so do items a surgery produces, like hemogen packs, and
 what a colonist gathers from an animal, like milk, wool or a boomalope's chemfuel, Vanilla Expanded mods' animals
 included. An organ a surgery harvests gets your colony's age too. A bionic or other implant a surgery removes gets the
-age of the faction of the pawn it came from, and keeps its normal art from a pawn with no faction. Items a job makes
+age of the faction of the pawn it came from, and keeps its normal art from a pawn with no faction. What your colonists
+mine from rock or bring up with a deep drill gets your colony's age. Rock broken any other way, like by an explosion,
+drops items with their normal art. Items a job makes
 also get your colony's age when the job's code names the item, like the hemogen packs Vanilla Races Expanded -
 Sanguophage's extraction jobs make. The framework finds those jobs when the game starts, so a mod needs nothing extra
 for it. The age is your colony's even when another faction's pawn does the job. Other jobs that take the item from

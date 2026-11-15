@@ -24,6 +24,8 @@ namespace VisualProgression
             TryPatch(harmony, typeof(MadeItemLookHook.DuringSurgery), "surgeries aren't watched, so their products keep their normal art");
             TryPatch(harmony, typeof(MadeItemLookHook.DuringGathering), "gathering from animals isn't watched, so milk, wool and the like keep their normal art");
             TryPatch(harmony, typeof(MadeItemLookHook.DuringExpandedGathering), "gathering from Vanilla Expanded animals isn't watched, so their products keep their normal art");
+            TryPatch(harmony, typeof(MadeItemLookHook.DuringMining), "mining isn't watched, so mined items keep their normal art");
+            TryPatch(harmony, typeof(MadeItemLookHook.DuringDeepDrilling), "deep drilling isn't watched, so drilled items keep their normal art");
             TryPatch(harmony, typeof(StyleDominanceHook), "Ideology counts things with a look as another ideology's style");
             TryPatch(harmony, typeof(TradeSilverRowHook), "silver with different looks is listed apart in a trade, and only the first row counts as money");
             TryPatch(harmony, typeof(TradeSilverRowLookHook), "a trade's silver row shows the colony's first silver stack, not the trader's silver");
