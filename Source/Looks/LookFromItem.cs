@@ -6,13 +6,17 @@ namespace VisualProgression
 {
     /// <summary>
     /// Fills in what a look leaves to its item: the item's graphic class, and for art from a mod, the item's own mod.
+    /// A look drawn by the game's meal graphic gets the framework's, which picks its picture itself.
     /// </summary>
     public static class LookFromItem
     {
         private static readonly AccessTools.FieldRef<GraphicData, Graphic> cachedGraphic =
             AccessTools.FieldRefAccess<GraphicData, Graphic>("cachedGraphic");
 
-        /// <summary>Fills in the look's missing graphic class and mod from the item, and rebuilds its graphic if it changed.</summary>
+        /// <summary>
+        /// Fills in the look's missing graphic class and mod from the item, gives a meal look the framework's meal
+        /// graphic, and rebuilds the look's graphic if anything changed.
+        /// </summary>
         public static void FillIn(ThingStyleDef look, ThingDef item)
         {
             GraphicData lookGraphic = look.graphicData;
@@ -22,6 +26,9 @@ namespace VisualProgression
             }
             Type itemGraphicClass = item.graphicData?.graphicClass;
             bool fillClass = lookGraphic.graphicClass == null && itemGraphicClass != null;
+            Type lookGraphicClass = fillClass ? itemGraphicClass : lookGraphic.graphicClass;
+            // Only the game's own class: a pack that names a class of its own keeps it.
+            bool isGameMealGraphic = lookGraphicClass == typeof(Graphic_MealVariants);
             string itemsMod = null;
             if (lookGraphic is GraphicData_FromMod fromModData && fromModData.fromMod.NullOrEmpty() && fromModData.skipMods.NullOrEmpty())
             {
@@ -34,7 +41,7 @@ namespace VisualProgression
                         ("VP_NoItemMod_" + look.defName).GetHashCode());
                 }
             }
-            if (!fillClass && itemsMod == null)
+            if (!fillClass && !isGameMealGraphic && itemsMod == null)
             {
                 return;
             }
@@ -43,7 +50,11 @@ namespace VisualProgression
             // graphic data. So the filled-in look gets a copy of its graphic data, and its graphic and icon are built again.
             GraphicData filled = (GraphicData)AccessTools.Method(typeof(object), "MemberwiseClone").Invoke(lookGraphic, null);
             cachedGraphic(filled) = null;
-            if (fillClass)
+            if (isGameMealGraphic)
+            {
+                filled.graphicClass = typeof(Graphic_MealLook);
+            }
+            else if (fillClass)
             {
                 filled.graphicClass = itemGraphicClass;
             }

@@ -43,8 +43,10 @@ Write one `ThingStyleDef` for each look, then list the item's looks in an `ItemL
 A look that leaves out its `graphicClass` takes its item's, such as `Graphic_StackCount` for medicine or `Graphic_Multi`
 for furniture that rotates, so its art must be laid out the way that class expects. Meals use `Graphic_MealVariants`,
 which wants a set of images for mixed, meat and vegetarian meals, so a meal look with plain stack images gives
-`Graphic_StackCount` itself, as above. A look shared by items with different graphic classes needs its own
-`graphicClass` too.
+`Graphic_StackCount` itself, as above. A look that does have the three sets (3, 6 or 9 images) is drawn by the
+framework's own `VisualProgression.Graphic_MealLook`, which picks the image the way the game does. So a mod that
+changes how the game picks a meal's image can't make a look ask for one it doesn't have. A look shared by items with
+different graphic classes needs its own `graphicClass` too.
 
 For an item from another mod, give the `ItemLooksDef` `MayRequire="<that mod's packageId>"`, so it's skipped when that
 mod isn't active. Lists added as a `VisualProgression.CompProperties_AgeLook` in the item's `comps`, the way packs for
